@@ -84,6 +84,10 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun launchSpeechRecognition() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_AUDIO)
+            return
+        }
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
             say("Speech recognition is not available on this device.")
             return
@@ -119,6 +123,20 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                     }
                 }
             }
+        }
+    }
+
+    @Deprecated("Deprecated by Android, retained for broad device compatibility")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_AUDIO && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+            launchSpeechRecognition()
+        } else if (requestCode == REQUEST_AUDIO) {
+            say("Microphone permission was not granted.")
         }
     }
 
@@ -172,6 +190,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     companion object {
         private const val REQUEST_SPEECH = 4101
         private const val REQUEST_CAMERA = 4102
+        private const val REQUEST_AUDIO = 4103
     }
 }
 
