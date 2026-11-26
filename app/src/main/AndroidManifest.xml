@@ -10,7 +10,19 @@
         android:label="J.A.R.V.I.S"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
-        <service\n            android:name=".GameAccessibilityService"\n            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"\n            android:exported="true"\n            android:label="J.A.R.V.I.S Game Control">\n            <intent-filter>\n                <action android:name="android.accessibilityservice.AccessibilityService" />\n            </intent-filter>\n            <meta-data\n                android:name="android.accessibilityservice"\n                android:resource="@xml/game_accessibility_config" />\n        </service>\n        <activity
+        <service
+            android:name=".GameAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="true"
+            android:label="J.A.R.V.I.S Game Control">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/game_accessibility_config" />
+        </service>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
