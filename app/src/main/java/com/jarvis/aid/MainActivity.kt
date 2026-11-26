@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -60,7 +61,6 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private var listeningEnabled = false
     private var commandMode = false
     private var restarting = false
-    private var lastHandled = ""
     private var statusText by mutableStateOf("Opening assistant…")
     private var transcript by mutableStateOf("Keep J.A.R.V.I.S open and the screen awake. Say “Hey Jarvis” to activate.")
     private val navy = Color(0xFF07111F)
@@ -159,8 +159,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             override fun onError(error: Int) { scheduleRecognitionRestart() }
             override fun onResults(results: Bundle?) {
                 val phrase = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull().orEmpty()
-                if (phrase.isNotBlank() && phrase != lastHandled) {
-                    lastHandled = phrase
+                if (phrase.isNotBlank()) {
                     processRecognizedPhrase(phrase)
                 } else {
                     scheduleRecognitionRestart()
@@ -169,12 +168,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             override fun onPartialResults(partialResults: Bundle?) {
                 val phrase = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull().orEmpty()
                 val normalized = normalize(phrase)
-                if (!commandMode && containsWakePhrase(normalized)) {
-                    commandMode = true
-                    transcript = "Wake phrase detected. Listening for your command."
-                    say("I'm listening.")
-                    scheduleRecognitionRestart()
-                } else if (commandMode && containsOffPhrase(normalized)) {
+                if (commandMode && containsOffPhrase(normalized)) {
                     stopWakeListening()
                 }
             }
