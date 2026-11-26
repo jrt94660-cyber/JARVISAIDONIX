@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.provider.Settings
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -44,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -254,6 +254,18 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             command.contains("open bluetooth") -> {
                 startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); "Opening Bluetooth settings."
             }
+            command.contains("enable game control") || command.contains("game accessibility") -> {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                "Opening Accessibility settings. Select J.A.R.V.I.S Game Control and enable it. Android requires you to approve this manually."
+            }
+            command.contains("analyze game") || command.contains("analyze screen") || command.contains("what is on screen") -> {
+                "Visible game UI analysis: " + GameAccessibilityBridge.analyzeVisibleUi()
+            }
+            command.matches(Regex("tap\\\\s+\\\\d+(?:\\\\.\\\\d+)?\\\\s+\\\\d+(?:\\\\.\\\\d+)?")) -> {
+                val parts = command.split(Regex("\\\\s+"))
+                val ok = GameAccessibilityBridge.tap(parts[1].toFloat(), parts[2].toFloat())
+                if (ok) "Tap gesture sent." else "Game control is not enabled. Say enable game control, then approve the J.A.R.V.I.S accessibility service in Android settings."
+            }
             command.contains("turn on flashlight") || command.contains("flashlight on") -> setTorch(true)
             command.contains("turn off flashlight") || command.contains("flashlight off") -> setTorch(false)
             command.contains("what time") || command == "time" ->
@@ -263,7 +275,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             command.contains("who are you") ->
                 "I am J.A.R.V.I.S, your personal device assistant."
             else ->
-                "I heard: $raw. That command is not available yet. Try opening settings, Wi-Fi, Bluetooth, or controlling the flashlight."
+                "I heard: $raw. That command is not available yet. Try “analyze game”, “enable game control”, “tap 420 900”, opening settings, or controlling the flashlight."
         }
         respond(result)
     }
