@@ -261,8 +261,8 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             command.contains("analyze game") || command.contains("analyze screen") || command.contains("what is on screen") -> {
                 "Visible game UI analysis: " + GameAccessibilityBridge.analyzeVisibleUi()
             }
-            command.matches(Regex("tap\\\\s+\\\\d+(?:\\\\.\\\\d+)?\\\\s+\\\\d+(?:\\\\.\\\\d+)?")) -> {
-                val parts = command.split(Regex("\\\\s+"))
+            command.matches(Regex("tap\\s+\\\\d+(?:\\.\\\\d+)?\\s+\\\\d+(?:\\.\\\\d+)?")) -> {
+                val parts = command.split(Regex("\\s+"))
                 val ok = GameAccessibilityBridge.tap(parts[1].toFloat(), parts[2].toFloat())
                 if (ok) "Tap gesture sent." else "Game control is not enabled. Say enable game control, then approve the J.A.R.V.I.S accessibility service in Android settings."
             }
