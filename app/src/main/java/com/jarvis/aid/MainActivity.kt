@@ -261,10 +261,11 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             command.contains("analyze game") || command.contains("analyze screen") || command.contains("what is on screen") -> {
                 "Visible game UI analysis: " + GameAccessibilityBridge.analyzeVisibleUi()
             }
-            command.matches(Regex("tap\\s+\\\\d+(?:\\.\\\\d+)?\\s+\\\\d+(?:\\.\\\\d+)?")) -> {
-                val parts = command.split(Regex("\\s+"))
-                val ok = GameAccessibilityBridge.tap(parts[1].toFloat(), parts[2].toFloat())
-                if (ok) "Tap gesture sent." else "Game control is not enabled. Say enable game control, then approve the J.A.R.V.I.S accessibility service in Android settings."
+            command.startsWith("tap ") -> {
+                val parts = command.split(" ")
+                val coordinates = parts.size == 3 && parts[1].toIntOrNull() != null && parts[2].toIntOrNull() != null
+                val ok = coordinates && GameAccessibilityBridge.tap(parts[1].toFloat(), parts[2].toFloat())
+                if (ok) "Tap gesture sent." else "Use “tap X Y” with screen pixel coordinates, and enable J.A.R.V.I.S Game Control in Android Accessibility settings first."
             }
             command.contains("turn on flashlight") || command.contains("flashlight on") -> setTorch(true)
             command.contains("turn off flashlight") || command.contains("flashlight off") -> setTorch(false)
